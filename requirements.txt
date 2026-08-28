@@ -1,0 +1,9 @@
+flask>=3.0
+apscheduler>=3.10
+# The test runner and the linter ship with the gate: a merge gate whose runner
+# is an undeclared package stops working on whichever machine nobody prepared.
+pytest>=8.0
+# Ruff's minor is pinned on purpose: it promotes preview rules to stable on
+# minor bumps, so an unpinned linter fails PRs that changed nothing. Bump the
+# minor deliberately and fix the new findings in the same change.
+ruff>=0.16.4,<0.17

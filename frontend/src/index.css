@@ -1,0 +1,51 @@
+/* Design tokens. Every color, font and easing the app uses is defined here,
+   once, and each cell rebrands by editing this block — components must read
+   tokens, never hardcode values. Keep 4.5:1 contrast in both themes. */
+
+:root {
+  --brand-primary: #2d6ea8;   /* replace per client */
+  --brand-accent: #e0b23c;    /* replace per client */
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --text: #1c1c1c;
+  --text-muted: #5c5c5c;
+  --border: #ddd8ce;
+  --font-body: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181c;
+    --surface: #1f2229;
+    --text: #ececec;
+    --text-muted: #a5a5a5;
+    --border: #33373f;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+.shell-header {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 2px solid var(--brand-primary);
+}
+
+.brand {
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+.shell-main {
+  padding: 1.5rem;
+}

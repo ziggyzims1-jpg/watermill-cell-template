@@ -1,0 +1,81 @@
+# Water Mill contract template. An in-repo `watermill.yaml` always wins over a
+# vendored contract in water-mill/projects/, so a cell stamped from this
+# template carries its own contract from day one.
+#
+# On stamping a new cell: set `name` to the repo name (`<project>-cell-<n>`),
+# review the fence, and leave the caps at night-one values until the cell has
+# a night with zero reverts and an accurate report.
+
+version: 1
+name: watermill-cell-template  # CHANGE ME on stamping
+
+description: >
+  A cell stamped from watermill-cell-template: Flask + SQLite backend, Vite +
+  React frontend, `make verify` merge gate mirrored exactly by CI.
+
+commands:
+  gate: make verify
+  install: make install
+
+git:
+  base_branch: main
+  target: branch
+  remote: origin
+
+review:
+  create: gh pr create --base {base} --head {branch} --title {title} --body {body}
+  verify: gh pr checks {branch} --watch --fail-fast
+  merge: gh pr merge {branch} --squash --delete-branch
+
+queue:
+  kind: beads
+  ready: bd ready --json
+  stale: bd list --status in_progress --json
+  show: bd show {id}
+  claim: bd update {id} --claim
+  release: bd update {id} --status open
+  close: bd close {id}
+  comment: bd comment {id} {text}
+  exclude_types:
+    - epic
+
+fence:
+  paths:
+    # The gate and everything that decides what it means. An agent that can
+    # edit these can make itself pass.
+    - Makefile
+    - ruff.toml
+    - .github/workflows/
+    - frontend/vite.config.js
+    - frontend/eslint.config.js
+    # The schema: append-only MIGRATIONS, and the SCHEMA/index rule (db.py).
+    - db.py
+    # The work graph and doctrine.
+    - .beads/
+    - CLAUDE.md
+    # Client identity is not a task's to restyle.
+    - assets/branding/
+    # INTEGRATIONS ARE GATED BY DEFAULT. A provider module leaves this fence
+    # only through the ungating procedure in docs/integrations/README.md: a
+    # human wires it, proves it live, and files the wiring record. The fence
+    # format has no negation patterns, so to ungate a provider REPLACE this
+    # directory entry with one entry per still-gated module (e.g.
+    # `services/integrations/quickbooks*`), in the same PR as the wiring
+    # record. The gated list is enumerated from then on; a NEW provider must
+    # be added to it in the same change that creates its module.
+    - services/integrations/
+
+environment:
+  forbid_env:
+    FLASK_ENV: production
+    APP_ENV: production
+  min_free_gb: 2
+
+notes: []
+
+caps:
+  # Night-one values. Raised only after a night with zero reverts and an
+  # accurate report; never to compensate for a low task count.
+  max_tasks: 5
+  max_hours: 3
+  task_timeout_minutes: 30

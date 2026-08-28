@@ -1,0 +1,6 @@
+# Bug-focused rule set, zero across the repository, kept there by the gate.
+# E4/E7/E9/F ruff defaults; B bugbear; C4 comprehensions; UP pyupgrade.
+target-version = "py311"
+
+[lint]
+select = ["E4", "E7", "E9", "F", "B", "C4", "UP"]
