@@ -1,6 +1,6 @@
 # Integrations: gated by default, ungated by proof
 
-The full policy lives in `water-mill/docs/INTEGRATIONS.md`. The short version
+The full policy lives in `water-mill/docs/policies/INTEGRATIONS.md`. The short version
 every cell carries:
 
 **Gated (the default).** Every external integration is out of the mill's
