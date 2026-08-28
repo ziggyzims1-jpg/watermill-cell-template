@@ -40,5 +40,5 @@ exactly `make verify` and nothing else, so local and CI cannot diverge.
 ## Integrations
 
 Gated by default, ungated per provider by human proof plus a wiring record.
-Policy: `water-mill/docs/INTEGRATIONS.md`; procedure and record template:
+Policy: `water-mill/docs/policies/INTEGRATIONS.md`; procedure and record template:
 `docs/integrations/`.
