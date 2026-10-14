@@ -57,3 +57,4 @@ gate and the tests depend on that override working).
 This project uses **bd (beads)** for issue tracking. Use `bd` for ALL task
 tracking; run `bd prime` for workflow context. Do not commit, push, or sync
 unless explicitly asked.
+__Override: after any bead write, commit and push .beads/issues.jsonl (workshop rule 2026-09-03). In the cloud, never bd dolt push.__
