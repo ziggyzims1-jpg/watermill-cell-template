@@ -2,7 +2,7 @@
 
 Status: accepted (learned in zimmy-life-tracker, carried into every cell)
 
-`db.py` holds a `SCHEMA` for fresh databases and an append-only `MIGRATIONS` list for existing ones; both run idempotently on every start, so a deploy self-heals on pull and restart. `MIGRATIONS` is never edited or reordered. `SCHEMA` may reference only what `SCHEMA` itself creates: a new column goes in both places, but an index over it goes in `MIGRATIONS` only, after the `ALTER`. We chose this over a migration framework because the cell is a single SQLite file deployed by restart, and because the failure it prevents is severe: on an existing database `CREATE TABLE IF NOT EXISTS` is a no-op, so an index in `SCHEMA` over a not-yet-added column makes `executescript` fail as one script and the app crash-loops on boot.
+`db.py` holds a `SCHEMA` for fresh databases and an append-only `MIGRATIONS` list for existing ones; both run idempotently on every start, so a deploy self-heals on pull and restart. `MIGRATIONS` is never edited or reordered. `SCHEMA` may reference only what `SCHEMA` itself creates: a new column goes in both places, but an index over it goes in `MIGRATIONS` only, after the `ALTER`. The `SCHEMA` rule exists because the failure it prevents is severe: on an existing database `CREATE TABLE IF NOT EXISTS` is a no-op, so an index in `SCHEMA` over a not-yet-added column makes `executescript` fail as one script and the app crash-loops on boot.
 
 ## Consequences
 

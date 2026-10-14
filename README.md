@@ -29,8 +29,8 @@ Repo naming: `<project>-cell-<cell#>`.
    are created `--defer` (see `docs/integrations/README.md`).
 6. Rewrite `CLAUDE.md`'s project sections for the client's domain. The
    conventions section stays. Fill in the "this cell" sections of
-   `CONTEXT.md` and `CODING_STANDARDS.md`; `docs/adr/` ADR-0001 to 0006 are
-   inherited, the cell's own decisions start at ADR-0007.
+   `CONTEXT.md` and `CODING_STANDARDS.md`; `docs/adr/` ADR-0001 to 0008 are
+   inherited, the cell's own decisions start at ADR-0009.
 7. Push, confirm CI is green, and only then point the mill at it —
    supervised first; caps rise after a clean night.
 

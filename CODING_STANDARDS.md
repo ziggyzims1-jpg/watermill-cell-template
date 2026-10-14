@@ -12,10 +12,9 @@ What this cell enforces or states today, gathered in one place so the bolter rev
 
 ## Backend (Flask, SQLite)
 
-- `routes/` holds blueprints registered in `app.py`; business logic lives in `services/`. [doc: `CLAUDE.md` architecture table]
 - Migrations are append-only; `SCHEMA` references only what it creates; new columns go in both `SCHEMA` and `MIGRATIONS`; indexes go in `MIGRATIONS` only. [doc, fence: `db.py`; ADR-0006]
 - One definition of today: `services/clock.py`. Never a second local definition. [doc: `CLAUDE.md`]
-- All paths come from `config.py`; the data directory honours `DATA_DIR`. [gate: `make guard`]
+- Everything that touches disk (the database, the secret key) derives its path from `DATA_DIR`; a path built any other way escapes the tests' sandbox. [gate: `make guard` (checks only that `config.DATA_DIR` follows the variable); doc: `config.py` docstring]
 - Never send secrets to the client. Secret config keys are write-only in any settings UI and redacted from any config read endpoint. [doc]
 - Scheduled jobs record every run and outcome in `job_runs`; a job whose success is invisible needs a heartbeat and an alert on staleness. [doc]
 - Verification never runs against a production environment: `make guard` refuses when `FLASK_ENV`, `NODE_ENV`, `APP_ENV` or `ENVIRONMENT` is `production`, and the contract forbids `FLASK_ENV`/`APP_ENV` production for a run. [gate: `make guard`; contract: `watermill.yaml` `environment`]
@@ -31,14 +30,15 @@ What this cell enforces or states today, gathered in one place so the bolter rev
 
 - Provider code lives in `services/integrations/`, which is fenced. A new provider module is added to the fence in the change that creates it once the fence is enumerated. [fence, doc; ADR-0001]
 - A provider leaves the fence only with a wiring record in `docs/integrations/<provider>.md` and live proof. Beads that need a live provider are created `--defer`. [doc; ADR-0001]
-- Mock data, not network calls, backs any skeleton built before ungating.
+- Mock data, not network calls, backs any skeleton built before ungating. [doc: `docs/integrations/README.md`; ADR-0001]
 
 ## Process
 
 - Update `CLAUDE.md` in the same change that changes a table, route, config key or convention; a change is incomplete until its docs are. (`CLAUDE.md` is fenced: a human, or a bead that directs it, makes the edit.) [doc]
 - Tests are written at seams (a route, a public function, a CLI command), not against private helpers. Expected values come from an independent source, not recomputed as the code does. A new test is shown failing without the change; docs-only changes say so. [doc: millstone role, ADR-0003]
 - Commits use conventional-commit style, matching `git log`, and name the bead id in the PR. [doc]
-- Never use `git stash` in a mill worktree; use a patch file. Never run `npm ci` in a directory other worktrees link to. [hook, ADR-0004]
+- Never use `git stash` in a mill worktree; use a patch file. [hook: `.claude/hooks/block-dangerous-git.py`; ADR-0004]
+- Never run `npm ci` or `npm install` in a `node_modules` other worktrees symlink to; use a worktree-local install. [doc: `.claude/agents/millstone.md`, `.claude/agents/sluice.md`]
 - Beads: commit and push `.beads/issues.jsonl` after any `bd` write. [doc; ADR-0002]
 - Terms in code, commits and docs follow `CONTEXT.md`; an architectural decision that is hard to reverse, surprising and a real trade-off gets an ADR in `docs/adr/`. [doc]
 

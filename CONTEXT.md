@@ -12,26 +12,26 @@ _Avoid_: Project (ambiguous with a Water Mill registered project), instance, ten
 
 **Water Mill**:
 The orchestrator that claims beads from a cell's queue, hands them to the crew, verifies what reached the repository and records what happened.
-_Avoid_: The mill (acceptable shorthand in prose, not in code or commit messages), pipeline, CI
+_Avoid_: Pipeline, CI
 
 **Contract**:
-The cell's `watermill.yaml`: the gate, queue commands, review commands, fence, environment checks and caps that the factory reads before a run. An in-repo contract always wins over a vendored one.
+The cell's `watermill.yaml`: the gate, queue commands, review commands, fence, environment checks and caps that the factory reads before a run.
 _Avoid_: Config (that is `config.py`), settings
 
 **Gate**:
-`make verify`: guard, build, ruff, ESLint at `--max-warnings=0`, Vitest and pytest. CI runs exactly this command and nothing else, so the two cannot diverge.
+`make verify`, the one command whose success means a change may merge; CI runs the same command (ADR-0005).
 _Avoid_: CI checks, test suite (the suite is only part of it)
 
 **Fence**:
-The list of paths in the contract (`fence.paths`) that a mill agent must not modify in an unsupervised run, because editing them could change what "passing" means or what is allowed. Entries are prefixes; the format has no negation.
+The list of paths in the contract (`fence.paths`) that a mill agent must not modify in an unsupervised run (ADR-0007).
 _Avoid_: Protected files, ignore list, blocklist
 
 **Caps**:
-The per-night limits in the contract (`max_tasks`, `max_hours`, `task_timeout_minutes`). Night-one values stay until a night with zero reverts and an accurate report.
+The per-night limits in the contract (`caps`) on how much work one night may take on.
 _Avoid_: Quotas, budget
 
 **Bead**:
-One task in the cell's `bd` queue; the unit of work the mill claims. Bead data lives in git as `.beads/issues.jsonl`.
+One task in the cell's `bd` queue; the unit of work the mill claims.
 _Avoid_: Ticket, issue, story
 
 **Deferred bead**:
@@ -39,63 +39,63 @@ A bead created with `bd create --defer` so it never appears in `bd ready`; used 
 _Avoid_: Blocked bead, backlog item
 
 **Crew**:
-The four agents `millstone` (implements one bead into one PR), `bolter` (standards review, report-only), `sluice` (spec review and independent verification, the only reviewer that pushes) and `tailrace` (verifies in CI, merges, closes the bead).
+The four agents that work a bead: `millstone` (implementer), `bolter` (standards reviewer), `sluice` (spec reviewer) and `tailrace` (lander). Their powers: ADR-0003.
 _Avoid_: Bots, workers, the team
 
 **Handoff**:
-The note an agent writes before signing off, saying where things stand and what failed. Per-bead notes live in `brain/handoffs/mill/<slug>.md`.
+The note an agent writes before signing off, saying where things stand and what failed.
 _Avoid_: Summary, report, changelog
 
 ### Integrations
 
 **Integration**:
-Any module that talks to an external provider (accounting, calendar, payments, e-mail and the like). Integration modules live in `services/integrations/`.
+Any module that talks to an external provider (accounting, calendar, payments, e-mail and the like).
 _Avoid_: Connector, plugin, adapter
 
 **Gated**:
-The default state of every integration: its module is on the fence and every bead that needs it is deferred, so no unsupervised run can touch it.
+The default state of every integration: fenced, with every bead that needs it deferred (ADR-0001).
 _Avoid_: Disabled, off, stubbed (a stub is the mock seam, not the gate)
 
 **Ungating**:
-Removing one provider from the fence, by a human, in a single PR that also files the wiring record and un-defers the provider's beads. See ADR-0001.
+Taking one provider off the fence after a human has wired it and proved it live (ADR-0001).
 _Avoid_: Enabling, unlocking, turning on
 
 **Wiring record**:
-`docs/integrations/<provider>.md`, copied from `docs/integrations/TEMPLATE.md`: how the integration actually works, with a `verified` date from a live round-trip. It describes the provider as it was on that date, not forever.
+The document recording how one provider's integration actually works, as proved by a live round-trip on a stated date.
 _Avoid_: Integration docs, setup notes
 
 **Re-gating**:
-Putting a provider back on the fence and its beads back to deferred when the provider changes under the integration, until a human re-proves it.
+Returning an ungated provider to the gated state because the provider changed under the integration.
 _Avoid_: Disabling, rollback
 
 **Mock data**:
-Fixed, credential-free data a skeleton or stub bead returns in place of a provider's response, so the seam and the UI can be built without a connection. Mock data never leaves the repo as a stand-in for proof.
-_Avoid_: Fixtures (those belong to tests), seed data (that is database content)
+Fixed, credential-free data returned in place of a provider's response, so the seam and the UI can be built without a connection. The integrations policy also calls it "mock fixtures".
+_Avoid_: Fake data, seed data (that is database content)
 
 ### Data and time
 
 **Schema**:
-The `SCHEMA` DDL in `db.py`, which may reference only what it itself creates.
+The DDL that creates a fresh database (`SCHEMA` in `db.py`).
 _Avoid_: Models, tables (the schema is the whole DDL, not one table)
 
 **Migration**:
-One entry in the append-only `MIGRATIONS` list in `db.py`. Entries are added at the end and never edited or reordered.
+One step that brings an existing database up to the current schema (an entry in `MIGRATIONS`, ADR-0006).
 _Avoid_: Schema change, upgrade script
 
 **Today**:
-The cell's single definition of the current date: `services/clock.py` on the backend, `utils.localDate` on the frontend. Local date, never UTC.
+The current local date, as the cell's single definition gives it (`services/clock.py`, `utils.localDate`).
 _Avoid_: now, current date
 
 **Job run**:
-A row in `job_runs` recording one execution and outcome of a scheduled job. A job whose success is invisible needs a heartbeat that alerts when it goes stale.
+One recorded execution of a scheduled job and its outcome (a row in `job_runs`).
 _Avoid_: Cron log, task log
 
 **Data dir**:
-The directory holding the SQLite database, set by `DATA_DIR`. The gate and the tests depend on that override working, so a test never writes beside the live database.
+The directory holding the database and the secret key, set by `DATA_DIR`.
 _Avoid_: Storage, db folder
 
 **Design token**:
-A named color, spacing or type value defined in `frontend/src/index.css`. Components read tokens and never hard-code colors.
+A named color, font or easing value that components use instead of a literal (defined in `frontend/src/index.css`).
 _Avoid_: Theme variable, style constant
 
 ## Language (this cell)
