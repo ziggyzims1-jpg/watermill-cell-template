@@ -28,7 +28,9 @@ Repo naming: `<project>-cell-<cell#>`.
 5. `bd init`, file the cell's beads. Beads needing a live external provider
    are created `--defer` (see `docs/integrations/README.md`).
 6. Rewrite `CLAUDE.md`'s project sections for the client's domain. The
-   conventions section stays.
+   conventions section stays. Fill in the "this cell" sections of
+   `CONTEXT.md` and `CODING_STANDARDS.md`; `docs/adr/` ADR-0001 to 0006 are
+   inherited, the cell's own decisions start at ADR-0007.
 7. Push, confirm CI is green, and only then point the mill at it —
    supervised first; caps rise after a clean night.
 
@@ -42,3 +44,9 @@ exactly `make verify` and nothing else, so local and CI cannot diverge.
 Gated by default, ungated per provider by human proof plus a wiring record.
 Policy: `water-mill/docs/policies/INTEGRATIONS.md`; procedure and record template:
 `docs/integrations/`.
+
+## Shared language, decisions and standards
+
+`CONTEXT.md` (glossary), `docs/adr/` (decisions every cell inherits) and
+`CODING_STANDARDS.md` (what the gate, the fence and `CLAUDE.md` already
+require) are what the bolter reviewer checks a PR against.
