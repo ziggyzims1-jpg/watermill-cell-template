@@ -4,7 +4,7 @@
 # `pipefail`, `cmd | tail` reports tail's exit status and a failing check
 # reads as a pass.
 SHELL := /bin/bash
-.SHELLFLAGS := -eu -o pipefail -c
+.SHELLFLAGS := --norc -eu -o pipefail -c
 
 .PHONY: all install build dev start clean \
         verify verify-fast guard lint lint-py lint-js typecheck \
